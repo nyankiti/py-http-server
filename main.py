@@ -3,8 +3,8 @@ import yaml
 import logging
 import signal
 
-from server import Server
-from worker import Worker
+from pyserve.server import Server
+from pyserve.worker import Worker
 
 logger = logging.getLogger(__name__)
 server = Server()

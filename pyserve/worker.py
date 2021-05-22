@@ -3,19 +3,9 @@ import queue
 import threading
 from typing import Type
 
-logger = logging.getLogger(__name__)
+from pyserve.gateway import DummyGateway, WSGI
 
-DUMMY_RESPONSE = '''HTTP/1.1 200 OK
-Date: Mon, 27 Jul 2009 12:28:53 GMT
-Server: Apache/2.2.14 (Win32)
-Last-Modified: Stu, 22 May 2009 19:15:56 GMT
-Content-Type: text/html
-Connection: Closed
-<html>
-<body>
-<h1>Hello, World!</h1>
-</body>
-</html>'''
+logger = logging.getLogger(__name__)
 
 
 class Worker:
@@ -24,10 +14,23 @@ class Worker:
 
     def setup(self, config):
         self.config = config
-        # What should be the size of this queue
+
+        # What should be the size of this queue?
         self.queue = queue.Queue(maxsize=config.get('concurrency', 10))
+
+        # Should we have one instance of App or multiple?
+        app_type = config.get('app-type', 'dummy')
+        if app_type == 'dummy':
+            self.gateway = DummyGateway()
+        elif app_type == 'wsgi':
+            self.gateway = WSGI(config['app-loc'], config['app-module'], config['app'])
+
         self.kill_pill = threading.Event()
-        threads = [RequestProcessorThread(name=f'RequestProcessor {i}', queue=self.queue, kill_pill=self.kill_pill) for i in range(config.get('concurrency', 10))]
+
+        # Is using threads ok?
+        # When should they be started?
+        # How would choice of concurrency model and start time impact resource usage?
+        threads = [RequestProcessorThread(name=f'RequestProcessor {i}', queue=self.queue, kill_pill=self.kill_pill, gateway=self.gateway) for i in range(config.get('concurrency', 10))]
         for t in threads:
             t.start()
 
@@ -41,7 +44,7 @@ class Worker:
         try:
             self.queue.put(sock, timeout=self.config.get('timeout', 5))
         except queue.Full:
-            # Send 503 Service Unavailable
+            # What should we do here?
             pass
 
     def shutdown(self):
@@ -51,10 +54,11 @@ class Worker:
 
 class RequestProcessorThread(threading.Thread):
 
-    def __init__(self, group=None, target=None, name=None, queue:queue.Queue=None, kill_pill=None, args=(), kwargs=None):
+    def __init__(self, group=None, target=None, name=None, queue:queue.Queue=None, kill_pill=None, gateway=None, args=(), kwargs=None):
         super().__init__(group=group, target=target, name=name, args=args, kwargs=kwargs)
         self.queue: Type[queue.Queue] = queue
         self.kill_pill = kill_pill
+        self.gateway = gateway
 
     def run(self) -> None:
         logger.info(f"Running thread {self.name}")
@@ -66,30 +70,20 @@ class RequestProcessorThread(threading.Thread):
                 continue
 
     def process(self, sock):
-        p = HttpParser()
-        body = []
-        while True:
-          # Warning: Calling recv without timeout
-          # recv() はソケット上のデータを受信し、バッファーに保管する。
-            data = sock.recv(1024)
-            if not data:
-                # The client closed the connection. Nothing to do anymore
-                return
+        # Should we read the body?
+        # Do we decide to read the body if method is not GET?
+        # What if we read the body even if method is GET?
+        # Does the server need to read the body or should we let the application read it?
+        # If we read the body, how long should we read it in terms of time?
+        chunk = sock.recv(1000)
+        parts = chunk.decode("utf-8").split('\r\n')
+        parts = parts[0].split(' ')
+        path = parts[1]
 
-            p.execute(data, len(data))
+        def write(data):
+            sock.send(data)
 
-            if p.is_partial_body():
-                body.append(p.recv_body())
+        self.gateway.process(path, sock, write)
 
-            if p.is_message_complete():
-                break
-
-        body = "".join(body)
-        headers = p.get_headers()
-        path = p.get_path()
-        query = p.get_query_string()
-        method = p.get_method()
-        
-        # Warning: Sending hard-coded response
-        sock.send(str.encode(DUMMY_RESPONSE))
+        # Should we close the connection?
         sock.close()

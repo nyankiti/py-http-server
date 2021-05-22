@@ -1,5 +1,6 @@
 # py-http-server
 自作http-server
+参考記事: https://betterprogramming.pub/writing-your-own-http-server-introduction-b2f94581268b
 
 
 # Signalについて
@@ -20,5 +21,11 @@ Webサイトのアドレスをブラウザに入力したとき、ブラウザ�
 つまり、実際に通信を行うのはClientSocket同士であり、ListenerSocketはServer側に新しいClientSocketを作成し、つなぐ役割を担う。\\
 このようにListenerSocketがたくさんのClientSocketを作成していくことで、Serverは複数の要求に対応できる
 
+# WSGI(Web Server Gateway Interface)について
+アプリケーションが好きなサーバーにデプロイできるように、アプリケーションとサーバーの間を取り持ち、全てのサーバーと同じ方法でアプリケーションを通信し、デプロイを可能にする\\
+WSGIが定義する内容
+・任意のWebサーバがどのようにアプリケーションを呼び出すか
+・どのようなパラメータを送信するか
+・どのような結果を期待するか
 
 
