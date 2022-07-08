@@ -1,0 +1,17 @@
+GET /parameters HTTP/1.1
+Host: localhost:8080
+Connection: keep-alive
+sec-ch-ua: ".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9,ja;q=0.8
+Cookie: _ga=GA1.1.1783912829.1639580363; wordpress_test_cookie=WP%20Cookie%20check; wordpress_logged_in_86a9106ae65537651a8e456835b316ab=nyankiti%7C1645923721%7Cf86KjFd6zNZUuZFwre29iBbEl8hiklxTEDB3Vwo5lrN%7C0bcecbe7d231cda952b88c79c37de36060fbb5f4f0c2face0add41319b4fb087; _ga_3KEK4DY2Z5=GS1.1.1648972179.35.1.1648972772.0; PGADMIN_LANGUAGE=en; pma_lang=en; wp_lang=ja; wp-settings-2=editor%3Dhtml%26amp%3BlibraryContent%3Dbrowse%26amp%3Bmfold%3Do%26amp%3Burlbutton%3Dcustom%26libraryContent%3Dbrowse; wp-settings-time-2=1651842582; phpMyAdmin=5353a6fd39859c27636db5855314d71f; wordpress_logged_in_70490311fe7c84acda8886406a6d884b=junko%7C1654949094%7CVHiI3TsaK7voo2jpGRNFJL5PycjjaqBu450OWaXiOKQ%7C14fb871935fcd02f367994fdfd4ace24a5eddde5688dec0090cbecf3e2d98a9f; wp-settings-time-1=1654776295; _xsrf=2|40140194|c9b6fab9859946ccf51d12bacc7c9456|1655364424
+
